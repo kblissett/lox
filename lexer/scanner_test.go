@@ -40,7 +40,7 @@ func TestDoesTheTestWork(t *testing.T) {
 	}
 
 	for _, testCase := range table {
-		scanner := Scanner{source: testCase.source}
+		scanner := Scanner{source: []rune(testCase.source)}
 		tokens := scanner.GetTokens()
 
 		if len(tokens) != len(testCase.tokens) {

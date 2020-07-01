@@ -2,7 +2,7 @@ package lexer
 
 // Scanner is a scanner for lox source code.
 type Scanner struct {
-	source          string
+	source          []rune
 	currentPosition int
 }
 
@@ -11,7 +11,7 @@ func (s *Scanner) match(nextToken rune, ifTrue, ifFalse TokenKind) TokenKind {
 		return ifFalse
 	}
 
-	if []rune(s.source)[s.currentPosition+1] == nextToken {
+	if s.source[s.currentPosition+1] == nextToken {
 		s.currentPosition++
 		return ifTrue
 	}
@@ -22,8 +22,8 @@ func (s *Scanner) match(nextToken rune, ifTrue, ifFalse TokenKind) TokenKind {
 // GetTokens gets the tokens from the source in the scanner.
 func (s *Scanner) GetTokens() []Token {
 	tokens := []Token{}
-	for s.currentPosition = 0; s.currentPosition < len([]rune(s.source)); s.currentPosition++ {
-		c := []rune(s.source)[s.currentPosition]
+	for s.currentPosition = 0; s.currentPosition < len(s.source); s.currentPosition++ {
+		c := s.source[s.currentPosition]
 		switch c {
 		case '(':
 			tokens = append(tokens, Token{Kind: leftParen})
