@@ -29,6 +29,14 @@ func TestDoesTheTestWork(t *testing.T) {
 		{"+", []Token{{Kind: plus}}},
 		{";", []Token{{Kind: semicolon}}},
 		{"*", []Token{{Kind: star}}},
+		{"!", []Token{{Kind: bang}}},
+		{"=", []Token{{Kind: equal}}},
+		{"<", []Token{{Kind: less}}},
+		{">", []Token{{Kind: greater}}},
+		{"!=", []Token{{Kind: bangEqual}}},
+		{"<=", []Token{{Kind: lessEqual}}},
+		{">=", []Token{{Kind: greaterEqual}}},
+		{"==", []Token{{Kind: equalEqual}}},
 	}
 
 	for _, testCase := range table {
