@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -37,6 +38,9 @@ func TestDoesTheTestWork(t *testing.T) {
 		{"<=", []Token{{Kind: lessEqual}}},
 		{">=", []Token{{Kind: greaterEqual}}},
 		{"==", []Token{{Kind: equalEqual}}},
+		{"/", []Token{{Kind: slash}}},
+		{"// comment", []Token{}},
+		{"// comment\n;", []Token{{Kind: semicolon}}},
 	}
 
 	for _, testCase := range table {
@@ -48,11 +52,9 @@ func TestDoesTheTestWork(t *testing.T) {
 			continue
 		}
 
-		for i := 0; i < len(testCase.tokens); i++ {
-			if tokens[i].Kind != testCase.tokens[i].Kind {
-				t.Errorf("Tokens from source %q was incorrect: got %v, wanted %v", testCase.source, tokens, testCase.tokens)
-				break
-			}
+		if !reflect.DeepEqual(tokens, testCase.tokens) {
+			t.Errorf("Tokens from source %q was incorrect: got %v, wanted %v", testCase.source, tokens, testCase.tokens)
+
 		}
 	}
 }

@@ -7,11 +7,7 @@ type Scanner struct {
 }
 
 func (s *Scanner) match(nextToken rune, ifTrue, ifFalse TokenKind) TokenKind {
-	if s.currentPosition+1 >= len(s.source) {
-		return ifFalse
-	}
-
-	if s.source[s.currentPosition+1] == nextToken {
+	if s.peek() == nextToken {
 		s.currentPosition++
 		return ifTrue
 	}
@@ -19,11 +15,28 @@ func (s *Scanner) match(nextToken rune, ifTrue, ifFalse TokenKind) TokenKind {
 	return ifFalse
 }
 
+func (s *Scanner) peek() rune {
+	if s.currentPosition >= len(s.source) {
+		return eofRune
+	}
+	return s.source[s.currentPosition]
+}
+
+func (s *Scanner) advance() rune {
+	currentRune := s.peek()
+	s.currentPosition++
+	return currentRune
+}
+
+func (s *Scanner) consumeComment() {
+	for c := s.peek(); c != eofRune && c != '\n'; c = s.advance() {
+	}
+}
+
 // GetTokens gets the tokens from the source in the scanner.
 func (s *Scanner) GetTokens() []Token {
 	tokens := []Token{}
-	for s.currentPosition = 0; s.currentPosition < len(s.source); s.currentPosition++ {
-		c := s.source[s.currentPosition]
+	for c := s.advance(); c != eofRune; c = s.advance() {
 		switch c {
 		case '(':
 			tokens = append(tokens, Token{Kind: leftParen})
@@ -53,6 +66,12 @@ func (s *Scanner) GetTokens() []Token {
 			tokens = append(tokens, Token{Kind: s.match('=', lessEqual, less)})
 		case '>':
 			tokens = append(tokens, Token{Kind: s.match('=', greaterEqual, greater)})
+		case '/':
+			if c = s.peek(); c != eofRune && c == '/' {
+				s.consumeComment()
+			} else {
+				tokens = append(tokens, Token{Kind: slash})
+			}
 		}
 	}
 	return tokens
@@ -65,6 +84,8 @@ type Token struct {
 
 // TokenKind is the kind of a token.
 type TokenKind int
+
+const eofRune = rune(-1)
 
 const (
 	leftParen TokenKind = iota
@@ -87,4 +108,5 @@ const (
 	equalEqual
 	lessEqual
 	greaterEqual
+	slash
 )
