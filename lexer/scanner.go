@@ -76,6 +76,13 @@ func (s *Scanner) GetTokens() []Token {
 			}
 		case '\n':
 			s.line++
+		case '"':
+			literalChars := []rune{}
+			for c = s.advance(); c != eofRune && c != '"'; c = s.advance() {
+				literalChars = append(literalChars, c)
+			}
+
+			tokens = append(tokens, Token{Kind: stringLiteral, Literal: string(literalChars)})
 		}
 	}
 	return tokens
@@ -83,7 +90,8 @@ func (s *Scanner) GetTokens() []Token {
 
 // Token is a lox source code token.
 type Token struct {
-	Kind TokenKind
+	Kind    TokenKind
+	Literal string
 }
 
 // TokenKind is the kind of a token.
@@ -113,4 +121,7 @@ const (
 	lessEqual
 	greaterEqual
 	slash
+
+	// literals
+	stringLiteral
 )

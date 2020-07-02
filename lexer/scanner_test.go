@@ -25,6 +25,21 @@ func TestNewLinesAdvanceLineCount(t *testing.T) {
 	}
 }
 
+func TestStringLiterals(t *testing.T) {
+	scanner := Scanner{source: []rune(`"the string"`)}
+	tokens := scanner.GetTokens()
+
+	if len(tokens) != 1 {
+		t.Errorf("Found the wrong number of tokens: got %d, wanted %d", len(tokens), 1)
+		return
+	}
+
+	want := Token{Kind: stringLiteral, Literal: "the string"}
+	if tokens[0] != want {
+		t.Errorf("Failed to parse string literal: got %+v, wanted: %+v", tokens[0], want)
+	}
+}
+
 func TestDoesTheTestWork(t *testing.T) {
 	table := []struct {
 		source string
