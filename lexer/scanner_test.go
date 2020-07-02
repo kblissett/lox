@@ -32,6 +32,8 @@ func TestStringLiterals(t *testing.T) {
 		errors []error
 	}{
 		{`"the string"`, []Token{{Kind: stringLiteral, Literal: "the string"}}, nil},
+		{`""`, []Token{{Kind: stringLiteral, Literal: ""}}, nil},
+		{`"my string`, nil, []error{ScanError{"unterminated string"}}},
 	}
 
 	for _, testCase := range table {

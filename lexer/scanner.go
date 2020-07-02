@@ -1,5 +1,14 @@
 package lexer
 
+// ScanError indicates an error during scanning
+type ScanError struct {
+	text string
+}
+
+func (e ScanError) Error() string {
+	return e.text
+}
+
 // Scanner is a scanner for lox source code.
 type Scanner struct {
 	source          []rune
@@ -35,8 +44,9 @@ func (s *Scanner) consumeComment() {
 }
 
 // GetTokens gets the tokens from the source in the scanner.
-func (s *Scanner) GetTokens() ([]Token, error) {
+func (s *Scanner) GetTokens() ([]Token, []error) {
 	tokens := []Token{}
+	var errors []error
 	s.line = 1
 	for c := s.advance(); c != eofRune; c = s.advance() {
 		switch c {
@@ -82,8 +92,16 @@ func (s *Scanner) GetTokens() ([]Token, error) {
 				literalChars = append(literalChars, c)
 			}
 
+			if c == eofRune {
+				errors = append(errors, ScanError{"unterminated string"})
+			}
+
 			tokens = append(tokens, Token{Kind: stringLiteral, Literal: string(literalChars)})
 		}
+	}
+
+	if errors != nil {
+		return nil, errors
 	}
 	return tokens, nil
 }
