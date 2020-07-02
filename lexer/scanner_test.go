@@ -15,6 +15,16 @@ import (
 // semicolon
 // star
 
+func TestNewLinesAdvanceLineCount(t *testing.T) {
+	scanner := Scanner{source: []rune("\n\n\n")}
+	_ = scanner.GetTokens()
+
+	want := 4
+	if scanner.line != want {
+		t.Errorf("Scanner line was not advanced: got %d, wanted %d", scanner.line, want)
+	}
+}
+
 func TestDoesTheTestWork(t *testing.T) {
 	table := []struct {
 		source string
@@ -41,6 +51,7 @@ func TestDoesTheTestWork(t *testing.T) {
 		{"/", []Token{{Kind: slash}}},
 		{"// comment", []Token{}},
 		{"// comment\n;", []Token{{Kind: semicolon}}},
+		{" \t\r\n", []Token{}},
 	}
 
 	for _, testCase := range table {

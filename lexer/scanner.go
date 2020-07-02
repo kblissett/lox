@@ -4,6 +4,7 @@ package lexer
 type Scanner struct {
 	source          []rune
 	currentPosition int
+	line            int
 }
 
 func (s *Scanner) match(nextToken rune, ifTrue, ifFalse TokenKind) TokenKind {
@@ -36,6 +37,7 @@ func (s *Scanner) consumeComment() {
 // GetTokens gets the tokens from the source in the scanner.
 func (s *Scanner) GetTokens() []Token {
 	tokens := []Token{}
+	s.line = 1
 	for c := s.advance(); c != eofRune; c = s.advance() {
 		switch c {
 		case '(':
@@ -72,6 +74,8 @@ func (s *Scanner) GetTokens() []Token {
 			} else {
 				tokens = append(tokens, Token{Kind: slash})
 			}
+		case '\n':
+			s.line++
 		}
 	}
 	return tokens
