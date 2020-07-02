@@ -17,7 +17,7 @@ import (
 
 func TestNewLinesAdvanceLineCount(t *testing.T) {
 	scanner := Scanner{source: []rune("\n\n\n")}
-	_ = scanner.GetTokens()
+	scanner.GetTokens()
 
 	want := 4
 	if scanner.line != want {
@@ -26,17 +26,31 @@ func TestNewLinesAdvanceLineCount(t *testing.T) {
 }
 
 func TestStringLiterals(t *testing.T) {
-	scanner := Scanner{source: []rune(`"the string"`)}
-	tokens := scanner.GetTokens()
-
-	if len(tokens) != 1 {
-		t.Errorf("Found the wrong number of tokens: got %d, wanted %d", len(tokens), 1)
-		return
+	table := []struct {
+		source string
+		tokens []Token
+		errors []error
+	}{
+		{`"the string"`, []Token{{Kind: stringLiteral, Literal: "the string"}}, nil},
 	}
 
-	want := Token{Kind: stringLiteral, Literal: "the string"}
-	if tokens[0] != want {
-		t.Errorf("Failed to parse string literal: got %+v, wanted: %+v", tokens[0], want)
+	for _, testCase := range table {
+		scanner := Scanner{source: []rune(testCase.source)}
+		tokens, errs := scanner.GetTokens()
+
+		if !reflect.DeepEqual(errs, testCase.errors) {
+			t.Errorf("Scanner produced incorrect errors: got %v, wanted %v", errs, testCase.errors)
+			continue
+		}
+
+		if len(tokens) != len(testCase.tokens) {
+			t.Errorf("Found the wrong number of tokens: got %d, wanted %d", len(tokens), len(testCase.tokens))
+			continue
+		}
+
+		if !reflect.DeepEqual(tokens, testCase.tokens) {
+			t.Errorf("Failed to parse string literal: got %+v, wanted: %+v", tokens, testCase.tokens)
+		}
 	}
 }
 
@@ -71,7 +85,7 @@ func TestDoesTheTestWork(t *testing.T) {
 
 	for _, testCase := range table {
 		scanner := Scanner{source: []rune(testCase.source)}
-		tokens := scanner.GetTokens()
+		tokens, _ := scanner.GetTokens()
 
 		if len(tokens) != len(testCase.tokens) {
 			t.Errorf("Got the incorrect number of tokens from source %q: got %d, wanted: %d", testCase.source, len(tokens), len(testCase.tokens))

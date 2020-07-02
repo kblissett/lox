@@ -35,7 +35,7 @@ func (s *Scanner) consumeComment() {
 }
 
 // GetTokens gets the tokens from the source in the scanner.
-func (s *Scanner) GetTokens() []Token {
+func (s *Scanner) GetTokens() ([]Token, error) {
 	tokens := []Token{}
 	s.line = 1
 	for c := s.advance(); c != eofRune; c = s.advance() {
@@ -85,7 +85,7 @@ func (s *Scanner) GetTokens() []Token {
 			tokens = append(tokens, Token{Kind: stringLiteral, Literal: string(literalChars)})
 		}
 	}
-	return tokens
+	return tokens, nil
 }
 
 // Token is a lox source code token.
