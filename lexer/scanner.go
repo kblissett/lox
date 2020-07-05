@@ -113,33 +113,36 @@ type Token struct {
 }
 
 // TokenKind is the kind of a token.
-type TokenKind int
+type TokenKind string
 
 const eofRune = rune(-1)
 
 const (
-	leftParen TokenKind = iota
-	rightParen
-	leftBrace
-	rightBrace
-	comma
-	dot
-	minus
-	plus
-	semicolon
-	star
-	bang
-	equal
-	less
-	greater
+	leftParen  TokenKind = "LEFT_PAREN"
+	rightParen           = "RIGHT_PAREN"
+	leftBrace            = "LEFT_BRACE"
+	rightBrace           = "RIGHT_BRACE"
+	comma                = "COMMA"
+	dot                  = "DOT"
+	minus                = "MINUS"
+	plus                 = "PLUS"
+	semicolon            = "SEMICOLON"
+	star                 = "STAR"
+	bang                 = "BANG"
+	equal                = "EQUAL"
+	less                 = "LESS"
+	greater              = "GREATER"
 
 	// two character kinds
-	bangEqual
-	equalEqual
-	lessEqual
-	greaterEqual
-	slash
+	bangEqual    = "BANG_EQUAL"
+	equalEqual   = "EQUAL_EQUAL"
+	lessEqual    = "LESS_EQUAL"
+	greaterEqual = "GREATER_EQUAL"
+	slash        = "SLASH"
 
 	// literals
-	stringLiteral
+	stringLiteral = "STRING_LITERAL"
+
+	// identifier
+	identifier = "IDENTIFIER"
 )
