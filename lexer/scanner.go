@@ -1,5 +1,9 @@
 package lexer
 
+import (
+	"unicode"
+)
+
 // ScanError indicates an error during scanning
 type ScanError struct {
 	text string
@@ -97,6 +101,14 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 			}
 
 			tokens = append(tokens, Token{Kind: stringLiteral, Literal: string(literalChars)})
+		default:
+			if isAlnum(c) {
+				chars := []rune{c}
+				for isAlnum(s.peek()) {
+					chars = append(chars, s.advance())
+				}
+				tokens = append(tokens, Token{Kind: identifier, Literal: string(chars)})
+			}
 		}
 	}
 
@@ -104,6 +116,10 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 		return nil, errors
 	}
 	return tokens, nil
+}
+
+func isAlnum(r rune) bool {
+	return unicode.IsLetter(r) || unicode.IsNumber(r) || r == '_'
 }
 
 // Token is a lox source code token.

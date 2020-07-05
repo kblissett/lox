@@ -56,6 +56,31 @@ func TestStringLiterals(t *testing.T) {
 	}
 }
 
+func TestIdentifiers(t *testing.T) {
+	table := map[string]struct {
+		source string
+		tokens []Token
+		errors []error
+	}{
+		"Can read a simple identifier": {"identifier", []Token{{Kind: identifier, Literal: "identifier"}}, nil},
+	}
+
+	for name, tc := range table {
+		scanner := Scanner{source: []rune(tc.source)}
+		tokens, errs := scanner.GetTokens()
+
+		if !reflect.DeepEqual(errs, tc.errors) {
+			t.Errorf("%q: Scanner produced incorrect errors: got %+v, wanted %+v", name, errs, tc.errors)
+			continue
+		}
+
+		if !reflect.DeepEqual(tokens, tc.tokens) {
+			t.Errorf("%q: Failed to parse identifier: got %+v, wanted %+v", name, tokens, tc.tokens)
+			continue
+		}
+	}
+}
+
 func TestDoesTheTestWork(t *testing.T) {
 	table := []struct {
 		source string
