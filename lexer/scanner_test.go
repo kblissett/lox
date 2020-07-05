@@ -25,68 +25,34 @@ func TestNewLinesAdvanceLineCount(t *testing.T) {
 	}
 }
 
-func TestStringLiterals(t *testing.T) {
-	table := []struct {
-		source string
-		tokens []Token
-		errors []error
-	}{
-		{`"the string"`, []Token{{Kind: stringLiteral, Literal: "the string"}}, nil},
-		{`""`, []Token{{Kind: stringLiteral, Literal: ""}}, nil},
-		{`"my string`, nil, []error{ScanError{"unterminated string"}}},
-	}
-
-	for _, testCase := range table {
-		scanner := Scanner{source: []rune(testCase.source)}
-		tokens, errs := scanner.GetTokens()
-
-		if !reflect.DeepEqual(errs, testCase.errors) {
-			t.Errorf("Scanner produced incorrect errors: got %v, wanted %v", errs, testCase.errors)
-			continue
-		}
-
-		if len(tokens) != len(testCase.tokens) {
-			t.Errorf("Found the wrong number of tokens: got %d, wanted %d", len(tokens), len(testCase.tokens))
-			continue
-		}
-
-		if !reflect.DeepEqual(tokens, testCase.tokens) {
-			t.Errorf("Failed to parse string literal: got %+v, wanted: %+v", tokens, testCase.tokens)
-		}
-	}
-}
-
-func TestIdentifiers(t *testing.T) {
+func TestScanner(t *testing.T) {
 	table := map[string]struct {
 		source string
 		tokens []Token
 		errors []error
 	}{
-		"Can read a simple identifier": {"identifier", []Token{{Kind: identifier, Literal: "identifier"}}, nil},
-	}
-
-	for name, tc := range table {
-		scanner := Scanner{source: []rune(tc.source)}
-		tokens, errs := scanner.GetTokens()
-
-		if !reflect.DeepEqual(errs, tc.errors) {
-			t.Errorf("%q: Scanner produced incorrect errors: got %+v, wanted %+v", name, errs, tc.errors)
-			continue
-		}
-
-		if !reflect.DeepEqual(tokens, tc.tokens) {
-			t.Errorf("%q: Failed to parse identifier: got %+v, wanted %+v", name, tokens, tc.tokens)
-			continue
-		}
-	}
-}
-
-func TestNumericLiterals(t *testing.T) {
-	table := map[string]struct {
-		source string
-		tokens []Token
-		errors []error
-	}{
+		"Can scan left paren":                 {"(", []Token{{Kind: leftParen, Literal: "("}}, nil},
+		"Can scan right paren":                {")", []Token{{Kind: rightParen, Literal: ")"}}, nil},
+		"Can scan left brace":                 {"{", []Token{{Kind: leftBrace, Literal: "{"}}, nil},
+		"Can scan right brace":                {"}", []Token{{Kind: rightBrace, Literal: "}"}}, nil},
+		"Can scan comma":                      {",", []Token{{Kind: comma, Literal: ","}}, nil},
+		"Can scan dot":                        {".", []Token{{Kind: dot, Literal: "."}}, nil},
+		"Can scan minus":                      {"-", []Token{{Kind: minus, Literal: "-"}}, nil},
+		"Can scan plus":                       {"+", []Token{{Kind: plus, Literal: "+"}}, nil},
+		"Can scan semicolon":                  {";", []Token{{Kind: semicolon, Literal: ";"}}, nil},
+		"Can scan star":                       {"*", []Token{{Kind: star, Literal: "*"}}, nil},
+		"Can scan bang":                       {"!", []Token{{Kind: bang, Literal: "!"}}, nil},
+		"Can scan equal":                      {"=", []Token{{Kind: equal, Literal: "="}}, nil},
+		"Can scan less":                       {"<", []Token{{Kind: less, Literal: "<"}}, nil},
+		"Can scan greater":                    {">", []Token{{Kind: greater, Literal: ">"}}, nil},
+		"Can scan bang equal":                 {"!=", []Token{{Kind: bangEqual, Literal: "!="}}, nil},
+		"Can scan less equal":                 {"<=", []Token{{Kind: lessEqual, Literal: "<="}}, nil},
+		"Can scan greater equal":              {">=", []Token{{Kind: greaterEqual, Literal: ">="}}, nil},
+		"Can scan equal equal":                {"==", []Token{{Kind: equalEqual, Literal: "=="}}, nil},
+		"Can scan slash":                      {"/", []Token{{Kind: slash, Literal: "/"}}, nil},
+		"Comments should be ignored":          {"// comment", []Token{}, nil},
+		"Can scan tokens after a comment":     {"// comment\n;", []Token{{Kind: semicolon, Literal: ";"}}, nil},
+		"Whitespace should be ignored":        {" \t\r\n", []Token{}, nil},
 		"Can read a simple numeric literal":   {"1234", []Token{{Kind: number, Literal: "1234"}}, nil},
 		"Decimal numbers should not be split": {"12.34", []Token{{Kind: number, Literal: "12.34"}}, nil},
 		"Should not create number from method call": {
@@ -98,51 +64,10 @@ func TestNumericLiterals(t *testing.T) {
 				{Kind: leftParen, Literal: "("},
 				{Kind: rightParen, Literal: ")"},
 			}, nil},
-	}
-	for name, tc := range table {
-		scanner := Scanner{source: []rune(tc.source)}
-		tokens, errs := scanner.GetTokens()
-
-		if !reflect.DeepEqual(errs, tc.errors) {
-			t.Errorf("%s: Scanner produced incorrect errors: got %+v, wanted %+v", name, errs, tc.errors)
-			continue
-		}
-
-		if !reflect.DeepEqual(tokens, tc.tokens) {
-			t.Errorf("%s: Failed to parse identifier: got %+v, wanted %+v", name, tokens, tc.tokens)
-			continue
-		}
-	}
-}
-
-func TestScanner(t *testing.T) {
-	table := map[string]struct {
-		source string
-		tokens []Token
-		errors []error
-	}{
-		"Can scan left paren":             {"(", []Token{{Kind: leftParen, Literal: "("}}, nil},
-		"Can scan right paren":            {")", []Token{{Kind: rightParen, Literal: ")"}}, nil},
-		"Can scan left brace":             {"{", []Token{{Kind: leftBrace, Literal: "{"}}, nil},
-		"Can scan right brace":            {"}", []Token{{Kind: rightBrace, Literal: "}"}}, nil},
-		"Can scan comma":                  {",", []Token{{Kind: comma, Literal: ","}}, nil},
-		"Can scan dot":                    {".", []Token{{Kind: dot, Literal: "."}}, nil},
-		"Can scan minus":                  {"-", []Token{{Kind: minus, Literal: "-"}}, nil},
-		"Can scan plus":                   {"+", []Token{{Kind: plus, Literal: "+"}}, nil},
-		"Can scan semicolon":              {";", []Token{{Kind: semicolon, Literal: ";"}}, nil},
-		"Can scan star":                   {"*", []Token{{Kind: star, Literal: "*"}}, nil},
-		"Can scan bang":                   {"!", []Token{{Kind: bang, Literal: "!"}}, nil},
-		"Can scan equal":                  {"=", []Token{{Kind: equal, Literal: "="}}, nil},
-		"Can scan less":                   {"<", []Token{{Kind: less, Literal: "<"}}, nil},
-		"Can scan greater":                {">", []Token{{Kind: greater, Literal: ">"}}, nil},
-		"Can scan bang equal":             {"!=", []Token{{Kind: bangEqual, Literal: "!="}}, nil},
-		"Can scan less equal":             {"<=", []Token{{Kind: lessEqual, Literal: "<="}}, nil},
-		"Can scan greater equal":          {">=", []Token{{Kind: greaterEqual, Literal: ">="}}, nil},
-		"Can scan equal equal":            {"==", []Token{{Kind: equalEqual, Literal: "=="}}, nil},
-		"Can scan slash":                  {"/", []Token{{Kind: slash, Literal: "/"}}, nil},
-		"Comments should be ignored":      {"// comment", []Token{}, nil},
-		"Can scan tokens after a comment": {"// comment\n;", []Token{{Kind: semicolon, Literal: ";"}}, nil},
-		"Whitespace should be ignored":    {" \t\r\n", []Token{}, nil},
+		"Can read a simple identifier":                            {"identifier", []Token{{Kind: identifier, Literal: "identifier"}}, nil},
+		"Can scan a simple string literal":                        {`"the string"`, []Token{{Kind: stringLiteral, Literal: "the string"}}, nil},
+		"Can scan an empty string literal":                        {`""`, []Token{{Kind: stringLiteral, Literal: ""}}, nil},
+		"Should return error when string literal is unterminated": {`"my string`, nil, []error{ScanError{"unterminated string"}}},
 	}
 
 	for name, tc := range table {
