@@ -20,7 +20,7 @@ type Scanner struct {
 	line            int
 }
 
-func (s *Scanner) match(nextToken rune, ifTrue, ifFalse TokenKind) TokenKind {
+func (s *Scanner) match(nextToken rune, ifTrue, ifFalse Token) Token {
 	if s.peek() == nextToken {
 		s.currentPosition++
 		return ifTrue
@@ -66,34 +66,34 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 		case ')':
 			tokens = append(tokens, Token{Kind: rightParen, Literal: ")"})
 		case '{':
-			tokens = append(tokens, Token{Kind: leftBrace})
+			tokens = append(tokens, Token{Kind: leftBrace, Literal: "{"})
 		case '}':
-			tokens = append(tokens, Token{Kind: rightBrace})
+			tokens = append(tokens, Token{Kind: rightBrace, Literal: "}"})
 		case ',':
-			tokens = append(tokens, Token{Kind: comma})
+			tokens = append(tokens, Token{Kind: comma, Literal: ","})
 		case '.':
 			tokens = append(tokens, Token{Kind: dot, Literal: "."})
 		case '-':
-			tokens = append(tokens, Token{Kind: minus})
+			tokens = append(tokens, Token{Kind: minus, Literal: "-"})
 		case '+':
-			tokens = append(tokens, Token{Kind: plus})
+			tokens = append(tokens, Token{Kind: plus, Literal: "+"})
 		case ';':
-			tokens = append(tokens, Token{Kind: semicolon})
+			tokens = append(tokens, Token{Kind: semicolon, Literal: ";"})
 		case '*':
-			tokens = append(tokens, Token{Kind: star})
+			tokens = append(tokens, Token{Kind: star, Literal: "*"})
 		case '!':
-			tokens = append(tokens, Token{Kind: s.match('=', bangEqual, bang)})
+			tokens = append(tokens, s.match('=', Token{Kind: bangEqual, Literal: "!="}, Token{Kind: bang, Literal: "!"}))
 		case '=':
-			tokens = append(tokens, Token{Kind: s.match('=', equalEqual, equal)})
+			tokens = append(tokens, s.match('=', Token{Kind: equalEqual, Literal: "=="}, Token{Kind: equal, Literal: "="}))
 		case '<':
-			tokens = append(tokens, Token{Kind: s.match('=', lessEqual, less)})
+			tokens = append(tokens, s.match('=', Token{Kind: lessEqual, Literal: "<="}, Token{Kind: less, Literal: "<"}))
 		case '>':
-			tokens = append(tokens, Token{Kind: s.match('=', greaterEqual, greater)})
+			tokens = append(tokens, s.match('=', Token{Kind: greaterEqual, Literal: ">="}, Token{Kind: greater, Literal: ">"}))
 		case '/':
 			if c = s.peek(); c != eofRune && c == '/' {
 				s.consumeComment()
 			} else {
-				tokens = append(tokens, Token{Kind: slash})
+				tokens = append(tokens, Token{Kind: slash, Literal: "/"})
 			}
 		case '\n':
 			s.line++
