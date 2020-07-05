@@ -5,16 +5,6 @@ import (
 	"testing"
 )
 
-// rightParen
-// leftBrace
-// rightBrace
-// comma
-// dot
-// minus
-// plus
-// semicolon
-// star
-
 func TestNewLinesAdvanceLineCount(t *testing.T) {
 	scanner := Scanner{source: []rune("\n\n\n")}
 	scanner.GetTokens()
