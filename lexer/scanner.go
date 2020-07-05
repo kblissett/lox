@@ -54,6 +54,10 @@ func (s *Scanner) consumeComment() {
 	}
 }
 
+func isAlnum(r rune) bool {
+	return unicode.IsLetter(r) || unicode.IsNumber(r) || r == '_'
+}
+
 // GetTokens gets the tokens from the source in the scanner.
 func (s *Scanner) GetTokens() ([]Token, []error) {
 	tokens := []Token{}
@@ -129,10 +133,6 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 		return nil, errors
 	}
 	return tokens, nil
-}
-
-func isAlnum(r rune) bool {
-	return unicode.IsLetter(r) || unicode.IsNumber(r) || r == '_'
 }
 
 // Token is a lox source code token.
