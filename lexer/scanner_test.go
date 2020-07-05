@@ -81,6 +81,40 @@ func TestIdentifiers(t *testing.T) {
 	}
 }
 
+func TestNumericLiterals(t *testing.T) {
+	table := map[string]struct {
+		source string
+		tokens []Token
+		errors []error
+	}{
+		"Can read a simple numeric literal":   {"1234", []Token{{Kind: number, Literal: "1234"}}, nil},
+		"Decimal numbers should not be split": {"12.34", []Token{{Kind: number, Literal: "12.34"}}, nil},
+		"Should not create number from method call": {
+			"1234.toString()",
+			[]Token{
+				{Kind: number, Literal: "1234"},
+				{Kind: dot, Literal: "."},
+				{Kind: identifier, Literal: "toString"},
+				{Kind: leftParen, Literal: "("},
+				{Kind: rightParen, Literal: ")"},
+			}, nil},
+	}
+	for name, tc := range table {
+		scanner := Scanner{source: []rune(tc.source)}
+		tokens, errs := scanner.GetTokens()
+
+		if !reflect.DeepEqual(errs, tc.errors) {
+			t.Errorf("%s: Scanner produced incorrect errors: got %+v, wanted %+v", name, errs, tc.errors)
+			continue
+		}
+
+		if !reflect.DeepEqual(tokens, tc.tokens) {
+			t.Errorf("%s: Failed to parse identifier: got %+v, wanted %+v", name, tokens, tc.tokens)
+			continue
+		}
+	}
+}
+
 func TestDoesTheTestWork(t *testing.T) {
 	table := []struct {
 		source string

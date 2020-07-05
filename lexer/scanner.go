@@ -36,6 +36,13 @@ func (s *Scanner) peek() rune {
 	return s.source[s.currentPosition]
 }
 
+func (s *Scanner) peekTwo() rune {
+	if s.currentPosition+1 >= len(s.source) {
+		return eofRune
+	}
+	return s.source[s.currentPosition+1]
+}
+
 func (s *Scanner) advance() rune {
 	currentRune := s.peek()
 	s.currentPosition++
@@ -55,9 +62,9 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 	for c := s.advance(); c != eofRune; c = s.advance() {
 		switch c {
 		case '(':
-			tokens = append(tokens, Token{Kind: leftParen})
+			tokens = append(tokens, Token{Kind: leftParen, Literal: "("})
 		case ')':
-			tokens = append(tokens, Token{Kind: rightParen})
+			tokens = append(tokens, Token{Kind: rightParen, Literal: ")"})
 		case '{':
 			tokens = append(tokens, Token{Kind: leftBrace})
 		case '}':
@@ -65,7 +72,7 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 		case ',':
 			tokens = append(tokens, Token{Kind: comma})
 		case '.':
-			tokens = append(tokens, Token{Kind: dot})
+			tokens = append(tokens, Token{Kind: dot, Literal: "."})
 		case '-':
 			tokens = append(tokens, Token{Kind: minus})
 		case '+':
@@ -102,7 +109,13 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 
 			tokens = append(tokens, Token{Kind: stringLiteral, Literal: string(literalChars)})
 		default:
-			if isAlnum(c) {
+			if unicode.IsNumber(c) {
+				chars := []rune{c}
+				for unicode.IsNumber(s.peek()) || (s.peek() == '.' && unicode.IsNumber(s.peekTwo())) {
+					chars = append(chars, s.advance())
+				}
+				tokens = append(tokens, Token{Kind: number, Literal: string(chars)})
+			} else if isAlnum(c) {
 				chars := []rune{c}
 				for isAlnum(s.peek()) {
 					chars = append(chars, s.advance())
@@ -158,6 +171,7 @@ const (
 
 	// literals
 	stringLiteral = "STRING_LITERAL"
+	number        = "NUMBER_LITERAL"
 
 	// identifier
 	identifier = "IDENTIFIER"
