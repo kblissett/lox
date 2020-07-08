@@ -124,7 +124,11 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 				for isAlnum(s.peek()) {
 					chars = append(chars, s.advance())
 				}
-				tokens = append(tokens, Token{Kind: identifier, Literal: string(chars)})
+				if tokenType, ok := keywords[string(chars)]; ok {
+					tokens = append(tokens, Token{Kind: tokenType, Literal: string(chars)})
+				} else {
+					tokens = append(tokens, Token{Kind: identifier, Literal: string(chars)})
+				}
 			}
 		}
 	}
@@ -145,6 +149,25 @@ type Token struct {
 type TokenKind string
 
 const eofRune = rune(-1)
+
+var keywords = map[string]TokenKind{
+	"and":    andType,
+	"class":  classType,
+	"else":   elseType,
+	"false":  falseType,
+	"for":    forType,
+	"fun":    funType,
+	"if":     ifType,
+	"nil":    nilType,
+	"or":     orType,
+	"print":  printType,
+	"return": returnType,
+	"super":  superType,
+	"this":   thisType,
+	"true":   trueType,
+	"var":    varType,
+	"while":  whileType,
+}
 
 const (
 	leftParen  TokenKind = "LEFT_PAREN"
@@ -175,4 +198,22 @@ const (
 
 	// identifier
 	identifier = "IDENTIFIER"
+
+	// keywords
+	andType    = "AND"
+	classType  = "CLASS"
+	elseType   = "ELSE"
+	falseType  = "FALSE"
+	forType    = "FOR"
+	funType    = "FUN"
+	ifType     = "IF"
+	nilType    = "NIL"
+	orType     = "OR"
+	printType  = "PRINT"
+	returnType = "RETURN"
+	superType  = "SUPER"
+	thisType   = "THIS"
+	trueType   = "TRUE"
+	varType    = "VAR"
+	whileType  = "WHILE"
 )

@@ -58,6 +58,7 @@ func TestScanner(t *testing.T) {
 		"Can scan a simple string literal":                        {`"the string"`, []Token{{Kind: stringLiteral, Literal: "the string"}}, nil},
 		"Can scan an empty string literal":                        {`""`, []Token{{Kind: stringLiteral, Literal: ""}}, nil},
 		"Should return error when string literal is unterminated": {`"my string`, nil, []error{ScanError{"unterminated string"}}},
+		"Keywords should be recognized":                           {"return", []Token{{Kind: returnType, Literal: "return"}}, nil},
 	}
 
 	for name, tc := range table {
