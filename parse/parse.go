@@ -25,12 +25,12 @@ func (b Binary) TreeString() string {
 
 // Grouping represents a Lox language grouping
 type Grouping struct {
-	Value Expression
+	Group Expression
 }
 
 // TreeString produces a string representation of a grouping expression
 func (g Grouping) TreeString() string {
-	return fmt.Sprintf("(group %s)", g.Value.TreeString())
+	return fmt.Sprintf("(group %s)", g.Group.TreeString())
 }
 
 // Literal represents a literal value
