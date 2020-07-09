@@ -78,7 +78,7 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 		case '.':
 			tokens = append(tokens, Token{Kind: dot, Literal: "."})
 		case '-':
-			tokens = append(tokens, Token{Kind: minus, Literal: "-"})
+			tokens = append(tokens, Token{Kind: Minus, Literal: "-"})
 		case '+':
 			tokens = append(tokens, Token{Kind: plus, Literal: "+"})
 		case ';':
@@ -176,7 +176,7 @@ const (
 	rightBrace           = "RIGHT_BRACE"
 	comma                = "COMMA"
 	dot                  = "DOT"
-	minus                = "MINUS"
+	Minus                = "MINUS"
 	plus                 = "PLUS"
 	semicolon            = "SEMICOLON"
 	star                 = "STAR"

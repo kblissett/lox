@@ -27,7 +27,7 @@ func TestScanner(t *testing.T) {
 		"Can scan right brace":                {"}", []Token{{Kind: rightBrace, Literal: "}"}}, nil},
 		"Can scan comma":                      {",", []Token{{Kind: comma, Literal: ","}}, nil},
 		"Can scan dot":                        {".", []Token{{Kind: dot, Literal: "."}}, nil},
-		"Can scan minus":                      {"-", []Token{{Kind: minus, Literal: "-"}}, nil},
+		"Can scan minus":                      {"-", []Token{{Kind: Minus, Literal: "-"}}, nil},
 		"Can scan plus":                       {"+", []Token{{Kind: plus, Literal: "+"}}, nil},
 		"Can scan semicolon":                  {";", []Token{{Kind: semicolon, Literal: ";"}}, nil},
 		"Can scan star":                       {"*", []Token{{Kind: star, Literal: "*"}}, nil},
