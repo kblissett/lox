@@ -51,5 +51,5 @@ type Unary struct {
 
 // TreeString produces a string representation of the tree represented by Unary
 func (u Unary) TreeString() string {
-	return u.Operator.Literal + u.RightHandSide.TreeString()
+	return fmt.Sprintf("(%s %s)", u.Operator.Literal, u.RightHandSide.TreeString())
 }
