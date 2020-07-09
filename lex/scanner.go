@@ -118,7 +118,7 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 				for unicode.IsNumber(s.peek()) || (s.peek() == '.' && unicode.IsNumber(s.peekTwo())) {
 					chars = append(chars, s.advance())
 				}
-				tokens = append(tokens, Token{Kind: number, Literal: string(chars)})
+				tokens = append(tokens, Token{Kind: Number, Literal: string(chars)})
 			} else if isAlnum(c) {
 				chars := []rune{c}
 				for isAlnum(s.peek()) {
@@ -194,7 +194,7 @@ const (
 
 	// literals
 	stringLiteral = "STRING_LITERAL"
-	number        = "NUMBER_LITERAL"
+	Number        = "NUMBER_LITERAL"
 
 	// identifier
 	identifier = "IDENTIFIER"

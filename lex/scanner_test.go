@@ -43,12 +43,12 @@ func TestScanner(t *testing.T) {
 		"Comments should be ignored":          {"// comment", []Token{}, nil},
 		"Can scan tokens after a comment":     {"// comment\n;", []Token{{Kind: semicolon, Literal: ";"}}, nil},
 		"Whitespace should be ignored":        {" \t\r\n", []Token{}, nil},
-		"Can read a simple numeric literal":   {"1234", []Token{{Kind: number, Literal: "1234"}}, nil},
-		"Decimal numbers should not be split": {"12.34", []Token{{Kind: number, Literal: "12.34"}}, nil},
+		"Can read a simple numeric literal":   {"1234", []Token{{Kind: Number, Literal: "1234"}}, nil},
+		"Decimal numbers should not be split": {"12.34", []Token{{Kind: Number, Literal: "12.34"}}, nil},
 		"Should not create number from method call": {
 			"1234.toString()",
 			[]Token{
-				{Kind: number, Literal: "1234"},
+				{Kind: Number, Literal: "1234"},
 				{Kind: dot, Literal: "."},
 				{Kind: identifier, Literal: "toString"},
 				{Kind: leftParen, Literal: "("},
