@@ -66,38 +66,38 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 	for c := s.advance(); c != eofRune; c = s.advance() {
 		switch c {
 		case '(':
-			tokens = append(tokens, Token{Kind: leftParen, Literal: "("})
+			tokens = append(tokens, Token{Kind: LeftParen, Literal: "("})
 		case ')':
-			tokens = append(tokens, Token{Kind: rightParen, Literal: ")"})
+			tokens = append(tokens, Token{Kind: RightParen, Literal: ")"})
 		case '{':
-			tokens = append(tokens, Token{Kind: leftBrace, Literal: "{"})
+			tokens = append(tokens, Token{Kind: LeftBrace, Literal: "{"})
 		case '}':
-			tokens = append(tokens, Token{Kind: rightBrace, Literal: "}"})
+			tokens = append(tokens, Token{Kind: RightBrace, Literal: "}"})
 		case ',':
-			tokens = append(tokens, Token{Kind: comma, Literal: ","})
+			tokens = append(tokens, Token{Kind: Comma, Literal: ","})
 		case '.':
-			tokens = append(tokens, Token{Kind: dot, Literal: "."})
+			tokens = append(tokens, Token{Kind: Dot, Literal: "."})
 		case '-':
 			tokens = append(tokens, Token{Kind: Minus, Literal: "-"})
 		case '+':
-			tokens = append(tokens, Token{Kind: plus, Literal: "+"})
+			tokens = append(tokens, Token{Kind: Plus, Literal: "+"})
 		case ';':
-			tokens = append(tokens, Token{Kind: semicolon, Literal: ";"})
+			tokens = append(tokens, Token{Kind: Semicolon, Literal: ";"})
 		case '*':
-			tokens = append(tokens, Token{Kind: star, Literal: "*"})
+			tokens = append(tokens, Token{Kind: Star, Literal: "*"})
 		case '!':
-			tokens = append(tokens, s.match('=', Token{Kind: bangEqual, Literal: "!="}, Token{Kind: bang, Literal: "!"}))
+			tokens = append(tokens, s.match('=', Token{Kind: BangEqual, Literal: "!="}, Token{Kind: Bang, Literal: "!"}))
 		case '=':
-			tokens = append(tokens, s.match('=', Token{Kind: equalEqual, Literal: "=="}, Token{Kind: equal, Literal: "="}))
+			tokens = append(tokens, s.match('=', Token{Kind: EqualEqual, Literal: "=="}, Token{Kind: Equal, Literal: "="}))
 		case '<':
-			tokens = append(tokens, s.match('=', Token{Kind: lessEqual, Literal: "<="}, Token{Kind: less, Literal: "<"}))
+			tokens = append(tokens, s.match('=', Token{Kind: LessEqual, Literal: "<="}, Token{Kind: Less, Literal: "<"}))
 		case '>':
-			tokens = append(tokens, s.match('=', Token{Kind: greaterEqual, Literal: ">="}, Token{Kind: greater, Literal: ">"}))
+			tokens = append(tokens, s.match('=', Token{Kind: GreaterEqual, Literal: ">="}, Token{Kind: Greater, Literal: ">"}))
 		case '/':
 			if c = s.peek(); c != eofRune && c == '/' {
 				s.consumeComment()
 			} else {
-				tokens = append(tokens, Token{Kind: slash, Literal: "/"})
+				tokens = append(tokens, Token{Kind: Slash, Literal: "/"})
 			}
 		case '\n':
 			s.line++
@@ -111,7 +111,7 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 				errors = append(errors, ScanError{"unterminated string"})
 			}
 
-			tokens = append(tokens, Token{Kind: stringLiteral, Literal: string(literalChars)})
+			tokens = append(tokens, Token{Kind: StringLiteral, Literal: string(literalChars)})
 		default:
 			if unicode.IsNumber(c) {
 				chars := []rune{c}
@@ -127,7 +127,7 @@ func (s *Scanner) GetTokens() ([]Token, []error) {
 				if tokenType, ok := keywords[string(chars)]; ok {
 					tokens = append(tokens, Token{Kind: tokenType, Literal: string(chars)})
 				} else {
-					tokens = append(tokens, Token{Kind: identifier, Literal: string(chars)})
+					tokens = append(tokens, Token{Kind: Identifier, Literal: string(chars)})
 				}
 			}
 		}
@@ -151,69 +151,69 @@ type TokenKind string
 const eofRune = rune(-1)
 
 var keywords = map[string]TokenKind{
-	"and":    andType,
-	"class":  classType,
-	"else":   elseType,
-	"false":  falseType,
-	"for":    forType,
-	"fun":    funType,
-	"if":     ifType,
-	"nil":    nilType,
-	"or":     orType,
-	"print":  printType,
-	"return": returnType,
-	"super":  superType,
-	"this":   thisType,
-	"true":   trueType,
-	"var":    varType,
-	"while":  whileType,
+	"and":    AndType,
+	"class":  ClassType,
+	"else":   ElseType,
+	"false":  FalseType,
+	"for":    ForType,
+	"fun":    FunType,
+	"if":     IfType,
+	"nil":    NilType,
+	"or":     OrType,
+	"print":  PrintType,
+	"return": ReturnType,
+	"super":  SuperType,
+	"this":   ThisType,
+	"true":   TrueType,
+	"var":    VarType,
+	"while":  WhileType,
 }
 
 const (
-	leftParen  TokenKind = "LEFT_PAREN"
-	rightParen           = "RIGHT_PAREN"
-	leftBrace            = "LEFT_BRACE"
-	rightBrace           = "RIGHT_BRACE"
-	comma                = "COMMA"
-	dot                  = "DOT"
+	LeftParen  TokenKind = "LEFT_PAREN"
+	RightParen           = "RIGHT_PAREN"
+	LeftBrace            = "LEFT_BRACE"
+	RightBrace           = "RIGHT_BRACE"
+	Comma                = "COMMA"
+	Dot                  = "DOT"
 	Minus                = "MINUS"
-	plus                 = "PLUS"
-	semicolon            = "SEMICOLON"
-	star                 = "STAR"
-	bang                 = "BANG"
-	equal                = "EQUAL"
-	less                 = "LESS"
-	greater              = "GREATER"
+	Plus                 = "PLUS"
+	Semicolon            = "SEMICOLON"
+	Star                 = "STAR"
+	Bang                 = "BANG"
+	Equal                = "EQUAL"
+	Less                 = "LESS"
+	Greater              = "GREATER"
 
 	// two character kinds
-	bangEqual    = "BANG_EQUAL"
-	equalEqual   = "EQUAL_EQUAL"
-	lessEqual    = "LESS_EQUAL"
-	greaterEqual = "GREATER_EQUAL"
-	slash        = "SLASH"
+	BangEqual    = "BANG_EQUAL"
+	EqualEqual   = "EQUAL_EQUAL"
+	LessEqual    = "LESS_EQUAL"
+	GreaterEqual = "GREATER_EQUAL"
+	Slash        = "SLASH"
 
 	// literals
-	stringLiteral = "STRING_LITERAL"
+	StringLiteral = "STRING_LITERAL"
 	Number        = "NUMBER_LITERAL"
 
-	// identifier
-	identifier = "IDENTIFIER"
+	// Identifier
+	Identifier = "IDENTIFIER"
 
 	// keywords
-	andType    = "AND"
-	classType  = "CLASS"
-	elseType   = "ELSE"
-	falseType  = "FALSE"
-	forType    = "FOR"
-	funType    = "FUN"
-	ifType     = "IF"
-	nilType    = "NIL"
-	orType     = "OR"
-	printType  = "PRINT"
-	returnType = "RETURN"
-	superType  = "SUPER"
-	thisType   = "THIS"
-	trueType   = "TRUE"
-	varType    = "VAR"
-	whileType  = "WHILE"
+	AndType    = "AND"
+	ClassType  = "CLASS"
+	ElseType   = "ELSE"
+	FalseType  = "FALSE"
+	ForType    = "FOR"
+	FunType    = "FUN"
+	IfType     = "IF"
+	NilType    = "NIL"
+	OrType     = "OR"
+	PrintType  = "PRINT"
+	ReturnType = "RETURN"
+	SuperType  = "SUPER"
+	ThisType   = "THIS"
+	TrueType   = "TRUE"
+	VarType    = "VAR"
+	WhileType  = "WHILE"
 )
